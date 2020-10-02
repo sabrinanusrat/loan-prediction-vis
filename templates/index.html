@@ -1,0 +1,110 @@
+<!DOCTYPE HTML>
+<!--
+	Binary by TEMPLATED
+	templated.co @templatedco
+	Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
+-->
+<html>
+	<head>
+		<title>Housing and Mortgage Information</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<!--<link rel="stylesheet" href="assets/css/main.css" />-->
+		<link rel="stylesheet" type="text/css" href="{{url_for('static', filename = 'assets/css/main.css')}}" />
+	</head>
+	<body>
+
+		<!-- Header -->
+			<header id="header">
+				<a href="index.html" class="logo"><strong>House</strong> Mortgage</a>
+				<nav>
+					<a href="#menu">Menu</a>
+				</nav>
+			</header>
+
+		<!-- Nav -->
+			<nav id="menu">
+				<ul class="links">
+					<li><a href="/">Home</a></li>
+					<li><a href="/predict">Predict</a></li>
+					<li><a href="/vis">Visualize Data</a></li>
+				</ul>
+			</nav>
+
+		<!-- Banner -->
+			<section id="banner">
+				<div class="inner">
+					<h1>To Buy or Not To Buy</a></h1>
+					<h3>Predict if you should buy a house by taking the loan your bank provides</a></h3>
+					<ul class="actions">
+						<li><a href="#one" class="button alt scrolly big">Continue</a></li>
+					</ul>
+				</div>
+			</section>
+
+		<!-- One -->
+			<article id="one" class="post style1">
+				<div class="image">
+					<img src="{{url_for('static', filename = 'images/home1.jpeg')}}" alt="" data-position="75% center" />
+				</div>
+				<div class="content">
+					<div class="inner">
+						<header>
+							<h2><a href="/predict">Predict your foreclosure probability</a></h2>
+							
+						</header>
+						<p>From recent history of loans and foreclosures, check out your probability of foreclosure</p>
+						<ul class="actions">
+							<li><a href="/predict" class="button alt">Go</a></li>
+						</ul>
+					</div>
+					<div class="postnav">
+						<a href="#" class="prev disabled"><span class="icon fa-chevron-up"></span></a>
+						<a href="#two" class="scrolly next"><span class="icon fa-chevron-down"></span></a>
+					</div>
+				</div>
+			</article>
+
+		<!-- Two -->
+			<article id="two" class="post invert style1 alt">
+				<div class="image">
+					<img src="{{url_for('static', filename = 'images/home2.jpeg')}}" alt="" data-position="10% center" />
+				</div>
+				<div class="content">
+					<div class="inner">
+						<header>
+							<h2><a href="/vis">Visualize Data on Foreclosures</a></h2>
+							
+						</header>
+						<p>Check out these fascinating charts and maps.</p>
+						<ul class="actions">
+							<li><a href="/vis" class="button alt">Go</a></li>
+						</ul>
+					</div>
+					<div class="postnav">
+						<a href="#one" class="scrolly prev"><span class="icon fa-chevron-up"></span></a>
+						<a href="#three" class="scrolly next"><span class="icon fa-chevron-down"></span></a>
+					</div>
+				</div>
+			</article>
+
+		
+
+		<!-- Footer -->
+			<footer id="footer">
+				
+				<div class="copyright">
+					<!---&copy; Untitled. Design: <a href="https://templated.co">TEMPLATED</a>. Images: <a href="https://unsplash.com">Unsplash</a>.-->
+					Questions? <address> Email:  <a href="mailto:sabrinanusrat@gmail.com">Sabrina Nusrat</a> </address>
+				</div>
+			</footer>
+
+		<!-- Scripts -->
+			<script src="{{url_for('static', filename = 'assets/js/jquery.min.js')}}"></script>
+			<script src="{{url_for('static', filename = 'assets/js/jquery.scrolly.min.js')}}"></script>
+			<script src="{{url_for('static', filename = 'assets/js/skel.min.js')}}"></script>
+			<script src="{{url_for('static', filename = 'assets/js/util.js')}}"></script>
+			<script src="{{url_for('static', filename = 'assets/js/main.js')}}"></script>
+
+	</body>
+</html>

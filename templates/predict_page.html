@@ -1,0 +1,203 @@
+<!DOCTYPE HTML>
+<!--
+	Binary by TEMPLATED
+	templated.co @templatedco
+	Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
+-->
+<html>
+	<head>
+		<title>Prediction</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="stylesheet" href="{{url_for('static', filename = 'assets/css/main.css')}}" />
+	</head>
+	<body>
+
+		<!-- Header -->
+		<header id="header">
+			<a href="/" class="logo"><strong>House</strong> Mortgage</a>
+			<nav>
+				<a href="#menu">Menu</a>
+			</nav>
+		</header>
+
+		<!-- Nav -->
+		<nav id="menu">
+			<ul class="links">
+				<li><a href="/">Home</a></li>
+				<li><a href="/predict">Predict</a></li>
+				<li><a href="/vis">Visualize Data</a></li>
+			</ul>
+		</nav>
+
+		<!-- Main -->
+		<section id="main">
+			<div class="inner">
+				<div class="image fit">
+					<img src="{{url_for('static', filename = 'images/pic11.jpg')}}" alt="" />
+				</div>
+				<header>
+					<h1>Know your chances of foreclosure</h1>	
+				</header>
+									
+				<div id='result'></div>
+
+				<!---form start--->
+				<div>
+					<h5>Enter the following information. The required fields are marked with a star (*)</h5>
+					<!-- Form to enter new data for predictions  -->
+					<form action="{{ url_for('predict')}}"method="POST">
+						
+						<h3>Your information</h3>
+
+						<div class="form-group">
+							<label class="inline-label">Enter your credit score *</label>
+							<input type="text" name="borrower_credit_score" placeholder="Your credit score" required="required" />
+						</div>
+
+						<div class="form-group">
+							<label class="inline-label">Enter your annual income *</label>
+							<input type="text" name="annual_income" placeholder="Your annual income" required="required" />
+						</div>
+
+						<div class="form-group">
+							<label class="inline-label">Are you a first time homebuyer?</label>
+							<div id="first_time_homebuyer" class="radio-group"></div>
+						</div>
+
+						<div class="form-group">
+							<label class="inline-label">Enter co-borrower's credit score (Enter 0 for no co-borrower)</label>
+							<input type="text" name="co_borrower_credit_score" placeholder="Co-borrower credit score (if any)"/>
+						</div>
+
+
+						<h3>Property Information</h3>
+						<div class="form-group">
+							<label class="inline-label">What's the value of the property *</label>
+							<input type="text" name="val" placeholder="Value of the property" required="required" />
+						</div>
+
+						<div class="form-group">
+							<label class="inline-label">Which state is the property located? *</label>
+							<select id="property_state" name="property_state" required="required">
+							<option disabled selected value> -- choose a state -- </option>
+							</select>
+						</div>
+
+						<div class="form-group">
+							<label class="inline-label">Enter property ZIP code *</label>
+							<input type="text" name="zip" placeholder="ZIP code" required="required" /><br>
+						</div>
+
+						<!--<input type="text" name="property_type" placeholder="Property type ('SF', 'CO', 'CP', 'MH', 'PU')"/><br>-->
+						<!--<select id="property_type" name="property_type" required="required">
+							<option disabled selected value> -- choose a property type -- </option>
+						</select>
+						<br>-->
+						<div class="form-group">
+							<label class="inline-label">Choose a property type</label>
+							<div id="property_type" class="radio-group"></div>
+						</div>
+
+						<!--<input type="text" name="occupancy_status" placeholder="Occupancy status ('P', 'S', 'I')"/><br>-->
+						<!--<select id="occupancy_status" name="occupancy_status" required="required">
+							<option disabled selected value> -- choose an occupancy status -- </option>
+						</select>
+						<br>-->
+						<div class="form-group">
+							<label class="inline-label">Choose an occupancy status</label>
+							<div id="occupancy_status" class="radio-group"></div>
+						</div>
+
+						<!--<input type="text" name="unit_count" placeholder="How many units" /><br>-->
+						<!--<select id="unit_count" name="unit_count" required="required">
+							<option disabled selected value> -- select the number of units -- </option>
+						</select>
+						<br>-->
+						<div class="form-group">
+							<label class="inline-label">How many units are in the property?</label>
+							<div id="unit_count" class="radio-group"></div>
+						</div>
+
+
+						<h3>Loan Information</h3>
+						<!--<input type="text" name="lender" placeholder="Name of the lender" required="required" /><br>-->
+						<div class="form-group">
+							<label class="inline-label">Choose a lender *</label>
+							<select id="lender" name="lender" required="required">
+								<option disabled selected value> -- choose a lender -- </option>
+							</select>
+						</div>
+						
+						<div class="form-group">
+							<label class="inline-label">What's the interest rate for the loan? *</label>
+							<input type="text" name="interest_rate" placeholder="Interest rate" required="required" />
+						</div>
+
+						<div class="form-group">
+							<label class="inline-label">Percentage of the property value you will put as down payment *</label>
+							<input type="text" name="down_payment" placeholder="Down payment percentage" required="required" />
+						</div>
+
+						<div class="form-group">
+							<label class="inline-label">Enter the loan term in years *</label>
+							<input type="text" name="loan_term" placeholder="Loan term in years"/>
+						</div>
+						
+						<!--<input type="text" name="loan_purpose" placeholder="Purpose of the loan ('P', 'C', 'R', 'U')"/><br>-->
+						<div class="form-group">
+							<label class="inline-label">What's the purpose of the loan?</label>
+							<div id="loan_purpose" class="radio-group"></div>
+						</div>
+
+							<!--<input type="text" name="channel" placeholder="Channel" required="required" /><br>-->
+						<!--<input type="text" name="insurance_percentage" placeholder="Insurance percentage" required="required" /><br>-->
+						<!--<input type="text" name="product_type" placeholder="product_type" required="required" /><br>-->
+						<!--<input type="text" name="first_payment_year" placeholder="First payment year" required="required" /><br>-->
+						<!--<input type="text" name="first_payment_month" placeholder="First payment month" required="required" /><br>-->
+						<!--<input type="text" name="origination_year" placeholder="Origination year" required="required" /><br>-->
+						<!--<input type="text" name="origination_month" placeholder="Origination month" required="required" /><br>-->
+												
+						<button type="submit" class="btn btn-primary btn-block btn-large">Predict</button>
+					</form>
+
+				<br>
+				<br>
+				</div>		
+				<!---form end--->
+			</div>
+		</section>
+		<div id=>
+
+		<!-- Footer -->
+		<footer id="footer">
+			<div class="copyright">
+				<!---&copy; Untitled. Design: <a href="https://templated.co">TEMPLATED</a>. Images: <a href="https://unsplash.com">Unsplash</a>.-->
+				Questions? <address> Email:  <a href="mailto:sabrinanusrat@gmail.com">Sabrina Nusrat</a> </address>
+			</div>
+		</footer>
+
+		<!-- Scripts -->
+		<script src="{{url_for('static', filename = 'assets/js/jquery.min.js')}}"></script>
+		<script src="{{url_for('static', filename = 'assets/js/jquery.scrolly.min.js')}}"></script>
+		<script src="{{url_for('static', filename = 'assets/js/skel.min.js')}}"></script>
+		<script src="{{url_for('static', filename = 'assets/js/util.js')}}"></script>
+		<script src="{{url_for('static', filename = 'assets/js/main.js')}}"></script>
+
+		<script src="{{url_for('static', filename = 'assets/js/populate_options.js')}}"></script>
+		<script type="text/javascript">
+			var resultDiv = document.getElementById('result');
+			resultDiv.innerHTML = {{pred|tojson}};
+
+			var allOptions = {{options|tojson}};
+			populateRadioButtons('first_time_homebuyer', allOptions['first_time_homebuyer']);
+			populateDropdown('property_state', allOptions['property_state']);
+			populateRadioButtons('property_type', allOptions['property_type']);
+			populateRadioButtons('occupancy_status', allOptions['occupancy_status']);
+			populateRadioButtons('unit_count', allOptions['unit_count']);
+			populateDropdown('lender', allOptions['lender']);
+			populateRadioButtons('loan_purpose', allOptions['loan_purpose']);
+		</script>
+
+	</body>
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE HTML>
+<!--
+	Binary by TEMPLATED
+	templated.co @templatedco
+	Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
+-->
+<html>
+	<head>
+		<title>Prediction</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="stylesheet" href="{{url_for('static', filename = 'assets/css/main.css')}}" />
+		
+    <script src="{{url_for('static', filename = 'assets/lib/d3.js')}}"></script>
+
+    
+    <script type="text/javascript" charset="utf-8"  src="{{url_for('static', filename = 'assets/lib/d3.geo.js')}}"></script>
+    <script type="text/javascript" charset="utf-8"  src="{{url_for('static', filename = 'assets/lib/d3.geom.js')}}"></script>
+    <script type="text/javascript" charset="utf-8"  src="{{url_for('static', filename = 'assets/lib/d3.layout.js')}}"></script>
+	<script type="text/javascript" src="{{url_for('static', filename = 'assets/lib/d3.v3.min.js')}}"></script>
+	
+	<!--<script src="legend.js"></script>-->
+	
+    <link type="text/css" rel="stylesheet" href="{{url_for('static', filename = 'assets/css/dorling.css')}}"/>
+    
+    
+	</head>
+	<body>
+
+		<!-- Header -->
+			<header id="header">
+				<a href="/" class="logo"><strong>House</strong> Mortgage</a>
+				<nav>
+					<a href="#menu">Menu</a>
+				</nav>
+			</header>
+
+		<!-- Nav -->
+			<nav id="menu">
+				<ul class="links">
+					<li><a href="/">Home</a></li>
+					<li><a href="/predict">Predict</a></li>
+					<li><a href="/vis">Visualize Data</a></li>
+				</ul>
+			</nav>
+
+		<!-- Main -->
+			<section id="main">
+				<div class="inner">
+			
+		<header class="major special">
+						<h1>Visualize Data</h1>
+						
+						<h3>Foreclosure</h3>
+						
+						<p>Number of foreclosures in the US since 2015</p>
+					</header>
+
+			
+			
+				
+			<div id="chart">
+    		
+
+	           <script type="text/javascript" src="{{url_for('static', filename = 'assets/js/choropleth_map.js')}}"></script>
+
+			
+			</div>
+			
+			
+			<header class="major special">
+						<h3>Foreclosure and Population</h3>
+						<p> US cartogram - Size indicates the population, and color indicates number of foreclosures</p>
+					</header>
+
+
+			<div id="chart2">
+    		<!--<script type="text/javascript" src="dorling_pop_starbucks.js"></script>-->
+    			<script type="text/javascript" src="{{url_for('static', filename = 'assets/js/dorling_generic_diff_choro.js')}}"></script>
+
+			
+			</div>
+				
+				
+				<header class="major special">
+						<h3>Foreclosure rate and Population</h3>
+						<p> US cartogram - Size indicates the population, and color indicates foreclosure rates (number of foreclosures per 10000 loans)</p>
+					</header>
+					
+			<div id="chart3">
+    		<!--<script type="text/javascript" src="dorling_pop_starbucks.js"></script>-->
+    			<script type="text/javascript" src="{{url_for('static', filename = 'assets/js/dorling_generic_diff_choro_fr.js')}}"></script>
+
+			
+			</div>	
+				
+			</section>
+
+		<!-- Footer -->
+			<footer id="footer">
+				<div class="copyright">
+					<!---&copy; Untitled. Design: <a href="https://templated.co">TEMPLATED</a>. Images: <a href="https://unsplash.com">Unsplash</a>.-->
+					Questions? <address> Email:  <a href="mailto:sabrinanusrat@gmail.com">Sabrina Nusrat</a> </address>
+				</div>
+			</footer>
+
+		<!-- Scripts -->
+			<script src="{{url_for('static', filename = 'assets/js/jquery.min.js')}}"></script>
+			<script src="{{url_for('static', filename = 'assets/js/jquery.scrolly.min.js')}}"></script>
+			<script src="{{url_for('static', filename = 'assets/js/skel.min.js')}}"></script>
+			<script src="{{url_for('static', filename = 'assets/js/util.js')}}"></script>
+			<script src="{{url_for('static', filename = 'assets/js/main.js')}}"></script>
+
+	</body>
+</html>

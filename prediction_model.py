@@ -6,6 +6,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
 from sklearn import metrics
 
+#read from train file
 def read():
     train = pd.read_csv(os.path.join(settings.PROCESSED_DIR, "train.csv"))
     return train
@@ -19,6 +20,7 @@ def cross_validate(model, train, target, scaler):
     # model.fit(X, y)
     return predictions
 
+#called from train_and_test_model
 def train_model(model, train, target, scaler):
     predictors = train.columns.tolist()
     predictors = [p for p in predictors if p not in settings.NON_PREDICTORS]
@@ -27,12 +29,15 @@ def train_model(model, train, target, scaler):
     model.fit(X_train, y_train)
     return X_test, y_test
 
+#called from the main function to train the models for foreclosure and delinquency
 def train_and_test_model(model, train, target, scaler):
     X_test, y_test = train_model(model, train, target, scaler)
     X_test = scaler.transform(X_test)
     y_pred = model.predict(X_test)
     return y_test, y_pred
 
+
+#once model is trained, predict for a single user input data
 def predict_single_data(model, scaler, borrower_credit_score, debt_to_income_ratio,
     lender, interest_rate, loan_amount, state, zip_code, loan_term=360,
     loan_to_value=80, combined_loan_to_value=80, borrower_count=1,
@@ -47,9 +52,11 @@ def predict_single_data(model, scaler, borrower_credit_score, debt_to_income_rat
     X = scaler.transform(X)
     return model.predict_proba(X)[0][model.classes_.tolist().index(True)]
 
+#calculate accuracy from scikit-learn 
 def compute_metrics_accuracy(target, predictions):
     return metrics.accuracy_score(target, predictions)
 
+#compute accuracy
 def compute_accuracy(target, predictions):
     df = pd.DataFrame({"target": target, "predictions": predictions})
     accurate_positive_data = df[(df["target"] == True) & (df["predictions"] == True)]

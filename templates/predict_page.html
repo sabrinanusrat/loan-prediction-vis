@@ -34,7 +34,7 @@
 		<section id="main">
 			<div class="inner">
 				<div class="image fit">
-					<img src="{{url_for('static', filename = 'images/pic11.jpg')}}" alt="" />
+					<img src="{{url_for('static', filename = 'images/ml2.jpeg')}}" alt="" />
 				</div>
 				<header>
 					<h1>Know your chances of foreclosure</h1>	
@@ -52,12 +52,12 @@
 
 						<div class="form-group">
 							<label class="inline-label">Enter your credit score *</label>
-							<input type="text" name="borrower_credit_score" placeholder="Your credit score" required="required" />
+							<input type="text" id="borrower_credit_score" name="borrower_credit_score" placeholder="Your credit score" required="required" />
 						</div>
 
 						<div class="form-group">
 							<label class="inline-label">Enter your annual income *</label>
-							<input type="text" name="annual_income" placeholder="Your annual income" required="required" />
+							<input type="text" id="annual_income" name="annual_income" placeholder="Your annual income" required="required" />
 						</div>
 
 						<div class="form-group">
@@ -67,14 +67,14 @@
 
 						<div class="form-group">
 							<label class="inline-label">Enter co-borrower's credit score (Enter 0 for no co-borrower)</label>
-							<input type="text" name="co_borrower_credit_score" placeholder="Co-borrower credit score (if any)"/>
+							<input type="text" id="co_borrower_credit_score" name="co_borrower_credit_score" placeholder="Co-borrower credit score (if any)"/>
 						</div>
 
 
 						<h3>Property Information</h3>
 						<div class="form-group">
 							<label class="inline-label">What's the value of the property *</label>
-							<input type="text" name="val" placeholder="Value of the property" required="required" />
+							<input type="text" id="val" name="val" placeholder="Value of the property" required="required" />
 						</div>
 
 						<div class="form-group">
@@ -86,7 +86,7 @@
 
 						<div class="form-group">
 							<label class="inline-label">Enter property ZIP code *</label>
-							<input type="text" name="zip" placeholder="ZIP code" required="required" /><br>
+							<input type="text" id="zip" name="zip" placeholder="ZIP code" required="required" /><br>
 						</div>
 
 						<!--<input type="text" name="property_type" placeholder="Property type ('SF', 'CO', 'CP', 'MH', 'PU')"/><br>-->
@@ -131,17 +131,17 @@
 						
 						<div class="form-group">
 							<label class="inline-label">What's the interest rate for the loan? *</label>
-							<input type="text" name="interest_rate" placeholder="Interest rate" required="required" />
+							<input type="text" id="interest_rate" name="interest_rate" placeholder="Interest rate" required="required" />
 						</div>
 
 						<div class="form-group">
 							<label class="inline-label">Percentage of the property value you will put as down payment *</label>
-							<input type="text" name="down_payment" placeholder="Down payment percentage" required="required" />
+							<input type="text" id="down_payment" name="down_payment" placeholder="Down payment percentage" required="required" />
 						</div>
 
 						<div class="form-group">
 							<label class="inline-label">Enter the loan term in years *</label>
-							<input type="text" name="loan_term" placeholder="Loan term in years"/>
+							<input type="text" id="loan_term" name="loan_term" placeholder="Loan term in years"/>
 						</div>
 						
 						<!--<input type="text" name="loan_purpose" placeholder="Purpose of the loan ('P', 'C', 'R', 'U')"/><br>-->
@@ -173,7 +173,7 @@
 		<footer id="footer">
 			<div class="copyright">
 				<!---&copy; Untitled. Design: <a href="https://templated.co">TEMPLATED</a>. Images: <a href="https://unsplash.com">Unsplash</a>.-->
-				Questions? <address> Email:  <a href="mailto:sabrinanusrat@gmail.com">Sabrina Nusrat</a> </address>
+				Questions? <address> Email:  <a href="mailto:sabrinanusrat@gmail.com">Email Us!</a> </address>
 			</div>
 		</footer>
 
@@ -190,13 +190,21 @@
 			resultDiv.innerHTML = {{pred|tojson}};
 
 			var allOptions = {{options|tojson}};
-			populateRadioButtons('first_time_homebuyer', allOptions['first_time_homebuyer']);
-			populateDropdown('property_state', allOptions['property_state']);
-			populateRadioButtons('property_type', allOptions['property_type']);
-			populateRadioButtons('occupancy_status', allOptions['occupancy_status']);
-			populateRadioButtons('unit_count', allOptions['unit_count']);
-			populateDropdown('lender', allOptions['lender']);
-			populateRadioButtons('loan_purpose', allOptions['loan_purpose']);
+			var allSelections = {{selections|tojson}}
+			populateRadioButtons('first_time_homebuyer', allOptions['first_time_homebuyer'], allSelections['first_time_homebuyer']);
+			populateDropdown('property_state', allOptions['property_state'], allSelections['property_state']);
+			populateRadioButtons('property_type', allOptions['property_type'], allSelections['property_type']);
+			populateRadioButtons('occupancy_status', allOptions['occupancy_status'], allSelections['occupancy_status']);
+			populateRadioButtons('unit_count', allOptions['unit_count'], allSelections['unit_count']);
+			populateDropdown('lender', allOptions['lender'], allSelections['lender']);
+			populateRadioButtons('loan_purpose', allOptions['loan_purpose'], allSelections['loan_purpose']);
+
+			for (field of ['borrower_credit_score', 'co_borrower_credit_score', 'annual_income',
+				'val', 'zip', 'interest_rate', 'down_payment', 'loan_term']) {
+				if (field in allSelections) {
+					document.getElementById(field).value = allSelections[field];
+				}				
+			}
 		</script>
 
 	</body>

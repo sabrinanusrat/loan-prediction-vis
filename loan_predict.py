@@ -75,7 +75,7 @@ def predict():
     
     if(get_pred_Status(foreclosure_probability)==1):
 
-        char_array=[]
+        recommendations=[]
 
         result_property_low, result_property_high = find_optimum_price(foreclosure_model, foreclosure_scaler,
         borrower_credit_score, debt_to_income_ratio, lender, interest_rate, loan_amount/2,
@@ -83,6 +83,7 @@ def predict():
         first_time_homebuyer, loan_purpose, property_type, unit_count, occupancy_status,
         product_type, co_borrower_credit_score, income, 40000, property_value)
 
+        print("prinint optimum values for property_value")
         print(result_property_low)
         print(result_property_high)
 
@@ -93,12 +94,16 @@ def predict():
             first_time_homebuyer, loan_purpose, property_type, unit_count, occupancy_status,
             product_type, co_borrower_credit_score, income)
 
+            recommendations.append({'param': 'property_value','values': value_array, 'probs': prob_array, 'text': 'If you get a property of value '+ str(result_property_low) +"%, your chance of foreclosure will go down to "+ str(int(100*prob_array[0]))+'%.'})
+
+
         result_interest_rate_low, result_interest_rate_high = find_optimum_interest_rate(foreclosure_model, foreclosure_scaler,
         borrower_credit_score, debt_to_income_ratio, lender, interest_rate, loan_amount,
         state, zip_code, loan_term, loan_to_value, combined_loan_to_value, borrower_count,
         first_time_homebuyer, loan_purpose, property_type, unit_count, occupancy_status,
         product_type, co_borrower_credit_score, income, 2.3, interest_rate)
 
+        print("prinint optimum values for interest_rate")
         print(result_interest_rate_low)
         print(result_interest_rate_high)
 
@@ -109,7 +114,7 @@ def predict():
             first_time_homebuyer, loan_purpose, property_type, unit_count, occupancy_status,
             product_type, co_borrower_credit_score, income)
 
-            char_array[len(char_array)]={'param': 'interest_rate','value_array': value_array, 'prob_array': prob_array}
+            recommendations.append({'param': 'interest_rate','values': value_array, 'probs': prob_array, 'text': 'If you get an interest rate of '+ str(result_interest_rate_low) +"%, your chance of foreclosure will go down to "+ str(int(100*prob_array[0]))+'%.'})
 
         result_credit_score_low, result_credit_score_high = find_optimum_credit_score(foreclosure_model, foreclosure_scaler,
         borrower_credit_score, debt_to_income_ratio, lender, interest_rate, loan_amount,
@@ -117,6 +122,7 @@ def predict():
         first_time_homebuyer, loan_purpose, property_type, unit_count, occupancy_status,
         product_type, co_borrower_credit_score, income, borrower_credit_score, 850)
 
+        print("prinint optimum values for borrower_credit_score")
         print(result_credit_score_low)
         print(result_credit_score_high)
 
@@ -127,13 +133,16 @@ def predict():
             first_time_homebuyer, loan_purpose, property_type, unit_count, occupancy_status,
             product_type, co_borrower_credit_score, income)
 
+            recommendations.append({'param': 'borrower_credit_score','values': value_array, 'probs': prob_array, 'text': 'If your credit scrore increases to '+ str(result_credit_score_high) +", your chance of foreclosure will go down to "+ str(int(100*prob_array[-1]))+'%.'})
+
+
         find_optimum_bank(foreclosure_model, foreclosure_scaler,
         borrower_credit_score, debt_to_income_ratio, lender, interest_rate, loan_amount,
         state, zip_code, loan_term, loan_to_value, combined_loan_to_value, borrower_count,
         first_time_homebuyer, loan_purpose, property_type, unit_count, occupancy_status,
         product_type, co_borrower_credit_score)
 
-    return render_template('predict_page.html', pred=pred, options=ALL_SELECTION_OTIONS, selections=request.form, char_array=char_array)
+    return render_template('predict_page.html', pred=pred, options=ALL_SELECTION_OTIONS, selections=request.form, recommendations=recommendations)
 
 def create_array_for_chart(param, low, high, foreclosure_model, foreclosure_scaler,
     borrower_credit_score, debt_to_income_ratio, lender, interest_rate, loan_amount,
@@ -158,8 +167,40 @@ def create_array_for_chart(param, low, high, foreclosure_model, foreclosure_scal
             value_array.append(low)
             prob_list.append(foreclosure_probability)
             low=low+0.2
-        
-    return interest_rate_array, prob_list
+
+    elif(param=='property_value'):
+        while(low<high):
+            
+            down_payment=100.0-loan_to_value
+            new_loan_amount = (low * (100.0-down_payment))/100.0
+            new_debt_to_income_ratio = compute_dti(income, new_loan_amount, interest_rate, loan_term)
+
+            foreclosure_probability = predict_single_data(foreclosure_model, foreclosure_scaler,
+                borrower_credit_score, new_debt_to_income_ratio, lender, low, new_loan_amount,
+                state, zip_code, loan_term, loan_to_value, combined_loan_to_value, borrower_count,
+                first_time_homebuyer, loan_purpose, property_type, unit_count, occupancy_status,
+                product_type, co_borrower_credit_score
+            )
+            value_array.append(low)
+            prob_list.append(foreclosure_probability)
+            low=low+20000
+    elif(param=='borrower_credit_score'):
+        while(low<high):
+            
+            foreclosure_probability = predict_single_data(foreclosure_model, foreclosure_scaler,
+                borrower_credit_score, debt_to_income_ratio, lender, low, loan_amount,
+                state, zip_code, loan_term, loan_to_value, combined_loan_to_value, borrower_count,
+                first_time_homebuyer, loan_purpose, property_type, unit_count, occupancy_status,
+                product_type, co_borrower_credit_score
+            )
+            value_array.append(low)
+            prob_list.append(foreclosure_probability)
+            low=low+20
+
+
+    print(value_array)
+    print(prob_list)
+    return value_array, prob_list
 
 
 
@@ -185,31 +226,31 @@ def find_optimum_credit_score(foreclosure_model, foreclosure_scaler,
         first_time_homebuyer, loan_purpose, property_type, unit_count, occupancy_status,
         product_type, co_borrower_credit_score, income, low, high):
 
-        print("current low credit= "+ str(low)+", current high credit= "+str(high))
+        #print("current low credit= "+ str(low)+", current high credit= "+str(high))
 
         if(low>high):
-            print('checkpoint 1')
-            print('-1, -1')
+            #print('checkpoint 1')
+            #print('-1, -1')
             return -1, -1
         elif(high-low<=20):
 
-            print('checkpoint 2')
+            #print('checkpoint 2')
             
             foreclosure_probability = predict_single_data(foreclosure_model, foreclosure_scaler,
             low, debt_to_income_ratio, lender, interest_rate, loan_amount,
             state, zip_code, loan_term, loan_to_value, combined_loan_to_value, borrower_count,
             first_time_homebuyer, loan_purpose, property_type, unit_count, occupancy_status,
             product_type, co_borrower_credit_score)
-            print('foreclosure probability for credit score '+str(low)+' is '+str(foreclosure_probability))
+            #print('foreclosure probability for credit score '+str(low)+' is '+str(foreclosure_probability))
 
             if(get_pred_Status(foreclosure_probability)==1):
-                print('-1, -1')
+                #print('-1, -1')
                 return -1, -1
             else:
-                print("low credit = "+ str(low)+", high credit = "+str(high))
+                #print("low credit = "+ str(low)+", high credit = "+str(high))
                 return  low, high
 
-        print('checkpoint 3')
+        #print('checkpoint 3')
         mid = low+ (high-low)/2
 
         
@@ -219,7 +260,7 @@ def find_optimum_credit_score(foreclosure_model, foreclosure_scaler,
             first_time_homebuyer, loan_purpose, property_type, unit_count, occupancy_status,
             product_type, co_borrower_credit_score
         )
-        print('foreclosure probability for credit '+str(mid)+' is '+str(foreclosure_probability))
+        #print('foreclosure probability for credit '+str(mid)+' is '+str(foreclosure_probability))
 
         if(get_pred_Status(foreclosure_probability)==1):
             return find_optimum_credit_score(foreclosure_model, foreclosure_scaler,
@@ -240,15 +281,15 @@ def find_optimum_price(foreclosure_model, foreclosure_scaler,
         first_time_homebuyer, loan_purpose, property_type, unit_count, occupancy_status,
         product_type, co_borrower_credit_score, income, low, high):
 
-        print("current low price= "+ str(low)+", current high price= "+str(high))
+        #print("current low price= "+ str(low)+", current high price= "+str(high))
 
         if(low>high):
-            print('checkpoint 1')
-            print('-1, -1')
+            #print('checkpoint 1')
+            #print('-1, -1')
             return -1, -1
         elif(high-low<=10000):
 
-            print('checkpoint 2')
+            #print('checkpoint 2')
             down_payment=100.0-loan_to_value
             new_loan_amount = (low * (100.0-down_payment))/100.0
             new_debt_to_income_ratio = compute_dti(income, new_loan_amount, interest_rate, loan_term)
@@ -259,16 +300,16 @@ def find_optimum_price(foreclosure_model, foreclosure_scaler,
             state, zip_code, loan_term, loan_to_value, combined_loan_to_value, borrower_count,
             first_time_homebuyer, loan_purpose, property_type, unit_count, occupancy_status,
             product_type, co_borrower_credit_score)
-            print('foreclosure probability for price '+str(low)+' is '+str(foreclosure_probability))
+            #print('foreclosure probability for price '+str(low)+' is '+str(foreclosure_probability))
 
             if(get_pred_Status(foreclosure_probability)==1):
-                print('-1, -1')
+                #print('-1, -1')
                 return -1, -1
             else:
-                print("low price = "+ str(low)+", high price = "+str(high))
+                #print("low price = "+ str(low)+", high price = "+str(high))
                 return  low, high
 
-        print('checkpoint 3')
+        #print('checkpoint 3')
         mid = low+ (high-low)/2
 
         down_payment=100.0-loan_to_value
@@ -281,7 +322,7 @@ def find_optimum_price(foreclosure_model, foreclosure_scaler,
             first_time_homebuyer, loan_purpose, property_type, unit_count, occupancy_status,
             product_type, co_borrower_credit_score
         )
-        print('foreclosure probability for price '+str(mid)+' is '+str(foreclosure_probability))
+        #print('foreclosure probability for price '+str(mid)+' is '+str(foreclosure_probability))
 
         if(get_pred_Status(foreclosure_probability)==1):
             return find_optimum_price(foreclosure_model, foreclosure_scaler,
@@ -301,14 +342,14 @@ def find_optimum_interest_rate(foreclosure_model, foreclosure_scaler,
         first_time_homebuyer, loan_purpose, property_type, unit_count, occupancy_status,
         product_type, co_borrower_credit_score, income, low, high):
 
-        print("current low interest_rate= "+ str(low)+", current high interest_rate= "+str(high))
+        #print("current low interest_rate= "+ str(low)+", current high interest_rate= "+str(high))
 
         if(low>high):
-            print('-1, -1')
+            #print('-1, -1')
             return -1, -1
         elif(high-low<=0.1):
 
-            print('checkpoint 2')
+            #print('checkpoint 2')
             new_debt_to_income_ratio = compute_dti(income, loan_amount, low, loan_term)
 
             foreclosure_probability = predict_single_data(foreclosure_model, foreclosure_scaler,
@@ -316,19 +357,18 @@ def find_optimum_interest_rate(foreclosure_model, foreclosure_scaler,
             state, zip_code, loan_term, loan_to_value, combined_loan_to_value, borrower_count,
             first_time_homebuyer, loan_purpose, property_type, unit_count, occupancy_status,
             product_type, co_borrower_credit_score)
-            print('foreclosure probability for interest rate '+str(low)+' is '+str(foreclosure_probability))
+            #print('foreclosure probability for interest rate '+str(low)+' is '+str(foreclosure_probability))
 
             if(get_pred_Status(foreclosure_probability)==1):
-                print('-1, -1')
+                #print('-1, -1')
                 return -1, -1
             else:
-                print("low interest= "+ str(low)+", high interest rate= "+str(high))
+                #print("low interest= "+ str(low)+", high interest rate= "+str(high))
                 return  low, high
-        print('checkpoint 3')
+        #print('checkpoint 3')
         mid = low+ (high-low)/2
 
-        #down_payment=100.0-loan_to_value
-        #new_loan_amount = (mid * (100.0-down_payment))/100.0
+        
         new_debt_to_income_ratio = compute_dti(income, loan_amount, mid, loan_term)
 
         foreclosure_probability = predict_single_data(foreclosure_model, foreclosure_scaler,
@@ -337,7 +377,7 @@ def find_optimum_interest_rate(foreclosure_model, foreclosure_scaler,
             first_time_homebuyer, loan_purpose, property_type, unit_count, occupancy_status,
             product_type, co_borrower_credit_score
         )
-        print('foreclosure probability for interest rate '+str(mid)+' is '+str(foreclosure_probability))
+        #print('foreclosure probability for interest rate '+str(mid)+' is '+str(foreclosure_probability))
         if(get_pred_Status(foreclosure_probability)==1):
             return find_optimum_interest_rate(foreclosure_model, foreclosure_scaler,
             borrower_credit_score, new_debt_to_income_ratio, lender, mid, loan_amount,
@@ -368,7 +408,7 @@ def find_optimum_bank(foreclosure_model, foreclosure_scaler,
             state, zip_code, loan_term, loan_to_value, combined_loan_to_value, borrower_count,
             first_time_homebuyer, loan_purpose, property_type, unit_count, occupancy_status,
             product_type, co_borrower_credit_score)
-            print('foreclosure probability for bank '+str(temp[i][0])+' is '+str(foreclosure_probability))
+            #print('foreclosure probability for bank '+str(temp[i][0])+' is '+str(foreclosure_probability))
 
 
 

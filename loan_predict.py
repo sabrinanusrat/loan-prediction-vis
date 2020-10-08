@@ -31,7 +31,7 @@ def predict():
     #prediction =10
     
     if 'annual_income' not in request.form:
-        return render_template('predict_page.html', pred='', options=ALL_SELECTION_OTIONS, selections=get_default_selections())
+        return render_template('predict_page.html', pred='', options=ALL_SELECTION_OTIONS, selections=get_default_selections(), recommendations=[])
     
     lender = get_categorical_value('lender', 'seller')
     interest_rate = float(request.form['interest_rate'])
@@ -114,7 +114,7 @@ def predict():
             first_time_homebuyer, loan_purpose, property_type, unit_count, occupancy_status,
             product_type, co_borrower_credit_score, income)
 
-            recommendations.append({'param': 'interest_rate','values': value_array, 'probs': prob_array, 'text': 'If you get an interest rate of '+ str(result_interest_rate_low) +"%, your chance of foreclosure will go down to "+ str(int(100*prob_array[0]))+'%.'})
+            recommendations.append({'param': 'interest_rate','values': value_array, 'probs': prob_array, 'text': 'If you get an interest rate of '+ str("{:.2f}".format(result_interest_rate_low)) +"%, your chance of foreclosure will go down to "+ str(int(100*prob_array[0]))+'%.'})
 
         result_credit_score_low, result_credit_score_high = find_optimum_credit_score(foreclosure_model, foreclosure_scaler,
         borrower_credit_score, debt_to_income_ratio, lender, interest_rate, loan_amount,
@@ -416,7 +416,7 @@ def get_pred_Status(foreclosure_probability):
     foreclosure_probability_percentage = int(100*foreclosure_probability)
     #print("foreclosure_probability_percentage="+str(foreclosure_probability_percentage))
 
-    if foreclosure_probability_percentage > 10:
+    if foreclosure_probability_percentage > 20:
         return 1
     else:
         return 0
@@ -457,6 +457,10 @@ def vis1():
     
     #return render_template('loan_home.html',pred='Expected Bill will be {}'.format(prediction))
     return render_template('vis1.html')    
+
+@app.route('/recommendations', methods=['GET', 'POST'])
+def recommendations():
+    return render_template('reco.html', recommendations=request.form['recommendations'])
 
 @app.route('/predict_api',methods=['POST'])
 def predict_api():

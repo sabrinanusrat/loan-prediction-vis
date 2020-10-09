@@ -10,7 +10,7 @@ Installation
 ### Download the data
 
 * Clone this repo to your computer.
-* Get into the folder using `cd loan-prediction`.
+* Get into the folder using `cd loan-prediction-vis`.
 * Run `mkdir data`.
 * Switch into the `data` directory using `cd data`.
 * Download the data files from Fannie Mae into the `data` directory.  
@@ -27,7 +27,7 @@ Installation
  
 * Install the requirements using `pip install -r requirements.txt`.
     * Make sure you use Python 3.
-    * You may want to use a virtual environment for this.
+    
 
 Usage
 -----------------------

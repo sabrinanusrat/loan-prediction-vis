@@ -21,7 +21,7 @@ Installation
     * On OSX, you can run `find ./ -name \*.zip -exec unzip {} \;`.
     * At the end, you should have a bunch of text files called `Acquisition_YQX.txt`, and `Performance_YQX.txt`, where `Y` is a year, and `X` is a number from `1` to `4`.
 * Remove all the zip files by running `rm *.zip`.
-* Switch back into the `loan-prediction` directory using `cd ..`.
+* Switch back into the `loan-prediction-vis` directory using `cd ..`.
 
 ### Install the requirements
  

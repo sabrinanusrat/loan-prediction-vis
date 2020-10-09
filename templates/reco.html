@@ -1,0 +1,115 @@
+<!DOCTYPE HTML>
+<!--
+	Binary by TEMPLATED
+	templated.co @templatedco
+	Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
+-->
+<html>
+	<head>
+		<title>Recommendations</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="stylesheet" href="{{url_for('static', filename = 'assets/css/main.css')}}" />
+		<link type="text/css" rel="stylesheet" href="{{url_for('static', filename = 'assets/css/dorling.css')}}"/>
+
+		<script src="{{url_for('static', filename = 'assets/lib/d3.js')}}"></script>    
+		<script type="text/javascript" charset="utf-8"  src="{{url_for('static', filename = 'assets/lib/d3.geo.js')}}"></script>
+		<script type="text/javascript" charset="utf-8"  src="{{url_for('static', filename = 'assets/lib/d3.geom.js')}}"></script>
+		<script type="text/javascript" charset="utf-8"  src="{{url_for('static', filename = 'assets/lib/d3.layout.js')}}"></script>
+		<script type="text/javascript" charset="utf-8"  src="{{url_for('static', filename = 'assets/lib/d3.min.js')}}"></script>
+		<script type="text/javascript" charset="utf-8" src="{{url_for('static', filename = 'assets/lib/d3.v3.min.js')}}"></script>
+		<script type="text/javascript" charset="utf-8" src="{{url_for('static', filename = 'assets/lib/d3.v3.js')}}"></script>
+	
+	</head>
+
+	<body>
+		<!-- Header -->
+		<header id="header">
+			<a href="/" class="logo"><strong>House</strong> Mortgage</a>
+			<nav>
+				<a href="#menu">Menu</a>
+			</nav>
+		</header>
+
+		<!-- Nav -->
+		<nav id="menu">
+			<ul class="links">
+				<li><a href="/">Home</a></li>
+				<li><a href="/predict">Predict</a></li>
+				<li><a href="/vis">Visualize Data</a></li>
+			</ul>
+		</nav>
+
+		<!-- Main -->
+			<section id="main">
+				<div class="inner">
+					<header class="major special">
+						<h1>Recommendations and Insights</h1>
+					</header>
+					<section>
+						<div class="row">
+							<div>
+								<p>Based on your data, here we try to provide the some recommendations and insights for you so that your chances of entering into foreclosure is minimal.</p>
+							<!--<div class="6u 12u$(xsmall)">-->
+								<h4>Things you can do</h4>
+								<ul id='recommendations'>
+									<!--<li>Dolor pulvinar etiam magna etiam.</li>
+									<li>Sagittis adipiscing lorem eleifend.</li>
+									<li>Felis enim feugiat dolore viverra.</li>-->
+								</ul>
+							</div>
+							<!--<div class="6u$ 12u$(xsmall)">
+							</div>-->
+						</div>
+					</section>
+				</div>
+			</section>
+
+			<!--<div id='recommendations'>
+			</div>-->
+
+		<!-- Footer -->
+			<footer id="footer">
+				<ul class="icons">
+					<li><a href="#" class="icon fa-twitter"><span class="label">Twitter</span></a></li>
+					<li><a href="#" class="icon fa-facebook"><span class="label">Facebook</span></a></li>
+					<li><a href="#" class="icon fa-instagram"><span class="label">Instagram</span></a></li>
+				</ul>
+				<div class="copyright">
+					&copy; Untitled. Design: <a href="https://templated.co">TEMPLATED</a>. Images: <a href="https://unsplash.com">Unsplash</a>.
+				</div>
+			</footer>
+
+		<!-- Scripts -->
+		<!-- Scripts -->
+		<script src="{{url_for('static', filename = 'assets/js/jquery.min.js')}}"></script>
+		<script src="{{url_for('static', filename = 'assets/js/jquery.scrolly.min.js')}}"></script>
+		<script src="{{url_for('static', filename = 'assets/js/skel.min.js')}}"></script>
+		<script src="{{url_for('static', filename = 'assets/js/util.js')}}"></script>
+		<script src="{{url_for('static', filename = 'assets/js/main.js')}}"></script>
+		<script src="{{url_for('static', filename = 'assets/js/recommendation_charts.js')}}"></script>
+		<script type="text/javascript">
+			var tooltip = d3.select("body")
+				.append("div")
+				.attr("class", "tooltip")
+				.style("visibility", "hidden");
+			var recoElement = document.getElementById('recommendations');
+
+			var all_recommendations = JSON.parse({{recommendations|tojson}});
+			for (var r=0; r<all_recommendations.length; r++) {
+				var recommendation = all_recommendations[r];
+				recoElement.innerHTML += '<li>'+recommendation.text+'<br><div id="recommendation_chart_'+r+'"></div></li>';
+				field = recommendation.param;
+				data = []
+				for (var i=0; i<recommendation.values.length; i++) {
+					data.push([recommendation.values[i], Math.round(100 * recommendation.probs[i])]);
+				}
+				draw_chart('recommendation_chart_'+r, data, 'Foreclosure probabilities for different '+field+'s', [field, 'foreclosure probability (%)'], 700, 500)
+			}
+			
+			//draw_chart('chart0', [[1000000, 40], [900000, 30], [800000, 15], [700000, 10]], 'chart', ['x-label', 'foreclosure probability'], 500, 350)
+		</script>
+
+	</body>
+</html>
+

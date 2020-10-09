@@ -34,7 +34,7 @@
 		<section id="main">
 			<div class="inner">
 				<div class="image fit">
-					<img src="{{url_for('static', filename = 'images/ml2.jpeg')}}" alt="" />
+					<img src="{{url_for('static', filename = 'images/pic11.jpg')}}" alt="" />
 				</div>
 				<header>
 					<h1>Know your chances of foreclosure</h1>	
@@ -43,7 +43,7 @@
 				<div id='result'></div>
 				<form name="recommendations_form" action="{{ url_for('recommendations')}}"method="POST">
 					<textarea name="recommendations" id="recommendations" style="display: none;"></textarea>
-					<a id="recommendations_submit" style="visibility: hidden;" href="" onclick="document.forms['recommendations_form'].submit(); return false;">click here</a> to see our recommendations.
+					<div id="recommendations_submit" style="visibility: hidden;"><a href="" onclick="document.forms['recommendations_form'].submit(); return false;">click here</a> to see our recommendations.</div>
 				</form>
 
 

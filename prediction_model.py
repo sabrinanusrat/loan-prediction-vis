@@ -41,7 +41,7 @@ def train_model(model, train, target, scaler):
     predictors = get_predictors(train, target)
     train = removeNegativeRows(train, predictors)
     X_train, X_test, y_train, y_test = model_selection.train_test_split(train[predictors], train[target], test_size = 0.25, random_state = 0)
-    #X_train, y_train = undersample(X_train, y_train, predictors, target)
+    X_train, y_train = undersample(X_train, y_train, predictors, target)
     X_train = scaler.fit_transform(X_train)
     model.fit(X_train, y_train)
     return X_test, y_test

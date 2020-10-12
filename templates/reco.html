@@ -99,6 +99,9 @@
 			for (var r=0; r<all_recommendations.length; r++) {
 				var recommendation = all_recommendations[r];
 				recoElement.innerHTML += '<li>'+recommendation.text+'<br><div id="recommendation_chart_'+r+'"></div></li>';
+			}
+			for (var r=0; r<all_recommendations.length; r++) {
+				var recommendation = all_recommendations[r];
 				field = recommendation.param;
 				if(field !== 'zip code') {
 					data = [];

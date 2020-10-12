@@ -100,11 +100,13 @@
 				var recommendation = all_recommendations[r];
 				recoElement.innerHTML += '<li>'+recommendation.text+'<br><div id="recommendation_chart_'+r+'"></div></li>';
 				field = recommendation.param;
-				data = []
-				for (var i=0; i<recommendation.values.length; i++) {
-					data.push([recommendation.values[i], Math.round(100 * recommendation.probs[i])]);
+				if(field !== 'zip code') {
+					data = [];
+					for (var i=0; i<recommendation.values.length; i++) {
+						data.push([recommendation.values[i], Math.floor(100 * recommendation.probs[i])]);
+					}
+					draw_chart('recommendation_chart_'+r, data, 'Foreclosure probabilities for different '+field+'s', [field, 'foreclosure probability (%)'], 700, 500);
 				}
-				draw_chart('recommendation_chart_'+r, data, 'Foreclosure probabilities for different '+field+'s', [field, 'foreclosure probability (%)'], 700, 500)
 			}
 			
 			//draw_chart('chart0', [[1000000, 40], [900000, 30], [800000, 15], [700000, 10]], 'chart', ['x-label', 'foreclosure probability'], 500, 350)

@@ -6,6 +6,8 @@ from categoricals import CATEGORICAL_INDEX_MAP
 from selections import ALL_SELECTION_OTIONS
 import settings
 from sklearn.svm import SVC
+import json
+import requests
 
 foreclosure_scaler = StandardScaler()
 #foreclosure_model = LogisticRegression(random_state=0, class_weight="balanced")
@@ -52,7 +54,7 @@ def predict():
     unit_count = int(request.form['unit_count']) if len(request.form['unit_count'])>0 else 1
     occupancy_status = get_categorical_value('occupancy_status', 'occupancy_status')
     state = get_categorical_value('property_state', 'property_state')
-    zip_code = int(request.form["zip"])/100
+    zip_code = (int(request.form["zip"])/100)
     product_type = 0
     co_borrower_credit_score = int(request.form['co_borrower_credit_score']) if len(request.form['co_borrower_credit_score'])>0 else 0
 
@@ -155,13 +157,57 @@ def predict():
             first_time_homebuyer, loan_purpose, property_type, unit_count, occupancy_status,
             product_type, co_borrower_credit_score, income)
 
-            recommendations.append({'param': 'down payment','values': value_array, 'probs': prob_array, 'text': 'If your credit scrore increases to '+ str(result_credit_score_high) +", your chance of foreclosure will go down to "+ str(int(100*prob_array[-1]))+'%.'})
+            recommendations.append({'param': 'down payment','values': value_array, 'probs': prob_array, 'text': 'If your down payment increases to '+ str(result_down_payment_high) +", your chance of foreclosure will go down to "+ str(int(100*prob_array[-1]))+'%.'})
 
         find_optimum_bank(foreclosure_model, foreclosure_scaler,
         borrower_credit_score, debt_to_income_ratio, lender, interest_rate, loan_amount,
         state, zip_code, loan_term, loan_to_value, combined_loan_to_value, borrower_count,
         first_time_homebuyer, loan_purpose, property_type, unit_count, occupancy_status,
         product_type, co_borrower_credit_score)
+
+        #find zip codes
+        api_call_zip= "https://www.zipcodeapi.com/rest/QsRqONATNkmmVzzIt6wEhzs6d7Q2zjiQnSCXNGr25Y9FDlp8gvwHX4TAA40DMW7N/radius.json/"+request.form["zip"]+"/120/mile"
+
+        print(api_call_zip)
+
+        response = requests.get(api_call_zip)
+        #print(response.text)
+        if(len(response.text)>0):
+            zip_dict=json.loads(response.text)
+            zip_dict['zip_codes'].sort(key=lambda x: x.get('distance'))
+            z_list=[]
+            min_proba= int(foreclosure_probability*100)
+            min_zip=-1
+            min_dist=-1
+            for z in zip_dict['zip_codes']:
+                zp=z['zip_code']
+                zp_short=int(zp[0:3])
+                st=CATEGORICAL_INDEX_MAP['property_state'][z['state']]
+                if(zp_short not in z_list):
+                    z_list.append(zp_short)
+                    foreclosure_probability_zip= predict_single_data(foreclosure_model, foreclosure_scaler,
+                        borrower_credit_score, debt_to_income_ratio, lender, interest_rate, loan_amount,
+                        st, zp_short, loan_term, loan_to_value, combined_loan_to_value, borrower_count,
+                        first_time_homebuyer, loan_purpose, property_type, unit_count, occupancy_status,
+                        product_type, co_borrower_credit_score
+                    )
+                    if(int(foreclosure_probability_zip *100)<min_proba):
+                        print('foreclosure_probability_zip: '+ str(foreclosure_probability_zip))
+                        print('zip: '+ str(zp_short))
+                        print('zipcode: '+ str(zp))
+                        print('distance: '+ str(z['distance']))
+                        min_proba=int(foreclosure_probability_zip*100)
+                        min_zip=str(zp)
+                        min_dist=z['distance']
+                        if(min_proba<=20):
+                            break
+
+            print(z_list)
+            if(min_zip!=-1):
+                recommendations.append({'param': 'zip code','values': [], 'probs': [], 'text': 'If you are willing to buy a house in '+ str(min_zip) +" instead (" + str(min_dist) +" miles away from your initial selection), your chance of foreclosure will go down to "+ str(min_proba)+'%.' })
+
+
+
 
     return render_template('predict_page.html', pred=pred, options=ALL_SELECTION_OTIONS, selections=request.form, recommendations=recommendations)
 

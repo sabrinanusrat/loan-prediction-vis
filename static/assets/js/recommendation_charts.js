@@ -24,7 +24,7 @@ function draw_chart(elementId, data, name, labels, width, height) {
         .domain([x_min - x_interval/20, x_max+x_interval/20])
         .range([left, right]);
     var scale_y = d3.scale.linear()
-        .domain([y_min, y_max])
+        .domain([y_min-1, y_max+1])
         //.domain([0, y_min+y_max>100? 100: y_min+y_max])
         .range([bottom, top]);
     

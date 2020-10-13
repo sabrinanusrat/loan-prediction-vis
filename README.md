@@ -10,7 +10,7 @@ Installation
 ### Download the data
 
 * Clone this repo to your computer.
-* Get into the folder using `cd loan-prediction`.
+* Get into the folder using `cd loan-prediction-vis`.
 * Run `mkdir data`.
 * Switch into the `data` directory using `cd data`.
 * Download the data files from Fannie Mae into the `data` directory.  
@@ -21,13 +21,13 @@ Installation
     * On OSX, you can run `find ./ -name \*.zip -exec unzip {} \;`.
     * At the end, you should have a bunch of text files called `Acquisition_YQX.txt`, and `Performance_YQX.txt`, where `Y` is a year, and `X` is a number from `1` to `4`.
 * Remove all the zip files by running `rm *.zip`.
-* Switch back into the `loan-prediction` directory using `cd ..`.
+* Switch back into the `loan-prediction-vis` directory using `cd ..`.
 
 ### Install the requirements
  
 * Install the requirements using `pip install -r requirements.txt`.
     * Make sure you use Python 3.
-    * You may want to use a virtual environment for this.
+    
 
 Usage
 -----------------------

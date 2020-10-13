@@ -17,6 +17,7 @@ delinquency_scaler = StandardScaler()
 delinquency_model = LogisticRegression(random_state=0, class_weight="balanced")
 #delinquency_model = LinearSVC(random_state=0, class_weight="balanced")
 
+
 app = Flask(__name__)
 #cols = ['age', 'sex', 'bmi', 'children', 'smoker', 'region']
 
@@ -456,15 +457,17 @@ def find_optimum_down_payment(foreclosure_model, foreclosure_scaler,
             state, zip_code, loan_term, new_loan_to_value, new_loan_to_value, borrower_count,
             first_time_homebuyer, loan_purpose, property_type, unit_count, occupancy_status,
             product_type, co_borrower_credit_score)
+        
+        print('foreclosure probabiloity for down payment '+str(mid)+'is '+str(foreclosure_probability))
 
         if(get_pred_Status(foreclosure_probability)==1):
-            return find_optimum_price(foreclosure_model, foreclosure_scaler,
+            return find_optimum_down_payment(foreclosure_model, foreclosure_scaler,
             borrower_credit_score, new_debt_to_income_ratio, lender, interest_rate, new_loan_amount,
             state, zip_code, loan_term, loan_to_value, combined_loan_to_value, borrower_count,
             first_time_homebuyer, loan_purpose, property_type, unit_count, occupancy_status,
             product_type, co_borrower_credit_score, income, mid, high)
         else:
-            return find_optimum_price(foreclosure_model, foreclosure_scaler, borrower_credit_score, new_debt_to_income_ratio, lender, interest_rate, new_loan_amount,
+            return find_optimum_down_payment(foreclosure_model, foreclosure_scaler, borrower_credit_score, new_debt_to_income_ratio, lender, interest_rate, new_loan_amount,
             state, zip_code, loan_term, loan_to_value, combined_loan_to_value, borrower_count,
             first_time_homebuyer, loan_purpose, property_type, unit_count, occupancy_status,
             product_type, co_borrower_credit_score, income, low, mid)

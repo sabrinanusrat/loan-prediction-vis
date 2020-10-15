@@ -115,7 +115,7 @@ d3.json(fl1_fr, function(states) {
 		var rMax="#31a354", rMean="#a1d99b", rMin = "#e5f5e0";
 
 var cScale_fr = 
-d3.scale.linear().domain([GDPMin_fr, GDPMax_fr]).range([rMin, rMax]);
+d3.scale.linear().domain([GDPMin_fr, GDPMax_fr]).range(["#eff3ff","#08519c"])//.range([rMin, rMax]);
 
 
 console.log("Testing cScale="+cScale_fr(0));

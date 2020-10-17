@@ -2,7 +2,7 @@ from flask import Flask, render_template, request
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
 from prediction_model import read, train_model, predict_single_data
-from categoricals import CATEGORICAL_INDEX_MAP
+import categoricals
 from selections import ALL_SELECTION_OTIONS
 import settings
 from sklearn.svm import SVC
@@ -17,6 +17,7 @@ delinquency_scaler = StandardScaler()
 delinquency_model = LogisticRegression(random_state=0, class_weight="balanced")
 #delinquency_model = LinearSVC(random_state=0, class_weight="balanced")
 
+foreclosure_data_per_state = {}
 
 app = Flask(__name__)
 #cols = ['age', 'sex', 'bmi', 'children', 'smoker', 'region']
@@ -203,7 +204,7 @@ def predict():
             for z in zip_dict['zip_codes']:
                 zp=z['zip_code']
                 zp_short=int(zp[0:3])
-                st=CATEGORICAL_INDEX_MAP['property_state'][z['state']]
+                st=categoricals.CATEGORICAL_INDEX_MAP['property_state'][z['state']]
                 if(zp_short not in z_list):
                     z_list.append(zp_short)
                     foreclosure_probability_zip= predict_single_data(foreclosure_model, foreclosure_scaler,
@@ -227,6 +228,8 @@ def predict():
             if(min_zip!=-1):
                 recommendations.append({'param': 'zip code','term': 'other','values': [], 'probs': [], 'text': 'If you are willing to buy a house in '+ str(min_zip) +" instead (" + str(min_dist) +" miles away from your initial selection), your chance of foreclosure will go down to "+ str(min_proba)+'%.' })
 
+        ranking = foreclosure_data_per_state[request.form['property_state']]['ranking']
+        recommendations.append({'param': 'other', 'term': 'other', 'values': [], 'probs': [], 'text': 'There are '+str(ranking)+' states with lower foreclosure rates than your selected state. If you are willing to move to a different state, you can use our <a href="/predict">prediction tool</a> to estimate your foreclosure probability in other states. You can also use our <a href="/vis">visualizations</a> to compare foreclosure rates and other demographics for different states.'})
 
 
 
@@ -644,8 +647,8 @@ def get_pred_Status(foreclosure_probability):
         return 0
 
 def get_categorical_value(element, category):
-    if request.form[element] in CATEGORICAL_INDEX_MAP[category]:
-        return CATEGORICAL_INDEX_MAP[category][request.form[element]]
+    if request.form[element] in categoricals.CATEGORICAL_INDEX_MAP[category]:
+        return categoricals.CATEGORICAL_INDEX_MAP[category][request.form[element]]
     else:
         return 0
 
@@ -697,6 +700,7 @@ if __name__ == '__main__':
     train_model(foreclosure_model, train, settings.FORECLOSURE_TARGET, foreclosure_scaler)
     train_model(delinquency_model, train, settings.DELINQUENCY_TARGET, delinquency_scaler)
 
+    foreclosure_data_per_state = categoricals.get_all_foreclosure_data_with_ranking(train, 'property_state')
     app.run(debug=True, host='0.0.0.0', port=5775, use_reloader=False)
 
 

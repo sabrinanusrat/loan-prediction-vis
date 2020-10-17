@@ -5,7 +5,7 @@ function draw_chart(elementId, data, name, labels, width, height) {
         .attr("height", height)
         .append("svg:g");
     
-    var left = 50;
+    var left = 60;
     var right = width-50;
     var bottom = height-100;
     var top = 50;
@@ -75,7 +75,7 @@ function draw_chart(elementId, data, name, labels, width, height) {
         .attr("class", "axis-label")
         .attr("text-anchor", "middle")
         .attr("x", -(top+bottom)/2)
-        .attr("y", left-35)
+        .attr("y", left-45)
         .attr("transform", "rotate(-90)")
         .text(labels[1]);
 

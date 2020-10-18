@@ -1,3 +1,4 @@
+import settings
 
 CATEGORICAL_ARRAYS = {
     "channel": ['R', 'B', 'C'], # Retail, Broker, Correspondent
@@ -85,3 +86,23 @@ def array_to_index_map(array):
 
 CATEGORICAL_INDEX_MAP = get_index_maps()
 
+def get_single_foreclosure_data(train, category, value):
+    loans = train[(train[category]==CATEGORICAL_INDEX_MAP[category][value])]
+    foreclosures = loans[(loans[settings.FORECLOSURE_TARGET]==True)]
+    return loans.shape[0], foreclosures.shape[0]
+
+def get_all_foreclosure_data(train, category):
+    foreclosure_data = {}
+    for value in CATEGORICAL_ARRAYS[category]:
+        loans, foreclosures = get_single_foreclosure_data(train, category, value)
+        foreclosure_data[value] = {'loan_count': loans, 'foreclosure_count': foreclosures, 'ratio': 1.0*foreclosures/loans}
+    return foreclosure_data
+
+def get_all_foreclosure_data_with_ranking(train, category):
+    foreclosure_data = get_all_foreclosure_data(train, category)
+    sorted_foreclosure_list = sorted(foreclosure_data.items(), key=lambda d: d[1]['ratio'])
+    sorted_foreclosure_data = {}
+    for index in range(len(sorted_foreclosure_list)):
+        sorted_foreclosure_data[sorted_foreclosure_list[index][0]] = sorted_foreclosure_list[index][1]
+        sorted_foreclosure_data[sorted_foreclosure_list[index][0]]['ranking'] = index
+    return sorted_foreclosure_data

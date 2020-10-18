@@ -2,7 +2,7 @@ from flask import Flask, render_template, request
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
 from prediction_model import read, train_model, predict_single_data
-from categoricals import CATEGORICAL_INDEX_MAP
+import categoricals
 from selections import ALL_SELECTION_OTIONS
 import settings
 from sklearn.svm import SVC
@@ -17,6 +17,7 @@ delinquency_scaler = StandardScaler()
 delinquency_model = LogisticRegression(random_state=0, class_weight="balanced")
 #delinquency_model = LinearSVC(random_state=0, class_weight="balanced")
 
+foreclosure_data_per_state = {}
 
 app = Flask(__name__)
 #cols = ['age', 'sex', 'bmi', 'children', 'smoker', 'region']
@@ -52,7 +53,7 @@ def predict():
     first_time_homebuyer = get_categorical_value('first_time_homebuyer', 'first_time_homebuyer')
     loan_purpose = get_categorical_value('loan_purpose', 'loan_purpose')
     property_type = get_categorical_value('property_type', 'property_type')
-    unit_count = int(request.form['unit_count']) if len(request.form['unit_count'])>0 else 1
+    unit_count = int(request.form['unit_count']) if 'unit_count' in request.form else 1
     occupancy_status = get_categorical_value('occupancy_status', 'occupancy_status')
     state = get_categorical_value('property_state', 'property_state')
     zip_code = (int(request.form["zip"])/100)
@@ -203,7 +204,7 @@ def predict():
             for z in zip_dict['zip_codes']:
                 zp=z['zip_code']
                 zp_short=int(zp[0:3])
-                st=CATEGORICAL_INDEX_MAP['property_state'][z['state']]
+                st=categoricals.CATEGORICAL_INDEX_MAP['property_state'][z['state']]
                 if(zp_short not in z_list):
                     z_list.append(zp_short)
                     foreclosure_probability_zip= predict_single_data(foreclosure_model, foreclosure_scaler,
@@ -227,6 +228,8 @@ def predict():
             if(min_zip!=-1):
                 recommendations.append({'param': 'zip code','term': 'other','values': [], 'probs': [], 'text': 'If you are willing to buy a house in '+ str(min_zip) +" instead (" + str(min_dist) +" miles away from your initial selection), your chance of foreclosure will go down to "+ str(min_proba)+'%.' })
 
+        ranking = foreclosure_data_per_state[request.form['property_state']]['ranking']
+        recommendations.append({'param': 'other', 'term': 'other', 'values': [], 'probs': [], 'text': 'There are '+str(ranking)+' states with lower foreclosure rates than your selected state. If you are willing to move to a different state, you can use our <a href="/predict">prediction tool</a> to estimate your foreclosure probability in other states. You can also use our <a href="/vis">visualizations</a> to compare foreclosure rates and other demographics for different states.'})
 
 
 
@@ -644,18 +647,19 @@ def get_pred_Status(foreclosure_probability):
         return 0
 
 def get_categorical_value(element, category):
-    if request.form[element] in CATEGORICAL_INDEX_MAP[category]:
-        return CATEGORICAL_INDEX_MAP[category][request.form[element]]
+    if element in request.form and request.form[element] in categoricals.CATEGORICAL_INDEX_MAP[category]:
+        return categoricals.CATEGORICAL_INDEX_MAP[category][request.form[element]]
     else:
         return 0
 
 def form_prediction_result(foreclosure_probability, delinquency_probability):
     foreclosure_probability_percentage = int(100*foreclosure_probability)
     delinquency_probability_percentage = int(100*delinquency_probability)
-    result = '<div class="box centered"><h4>Prediction</h4>'
+    result = '<div class="box centered">'
+    result += '<h4>Prediction</h4>'
     result += '<section>foreclosure probability = {}%</section>'.format(foreclosure_probability_percentage)
     result += '<section>delinquency probability = {}%</section>'.format(delinquency_probability_percentage)
-    result += '<br>';
+    result += '<br>'
     if foreclosure_probability_percentage > 20:
         flag_fc=1
         result += '<label class="alarm">There is a significant risk that your house will be foreclosed on during the loan term. Consider purchasing a less expensive house or getting a better interest rate.</label>'
@@ -663,6 +667,14 @@ def form_prediction_result(foreclosure_probability, delinquency_probability):
         result += '<label class="warning">There is minimal risk for your house to be foreclosed on, but you will be in risk of missing one or more mortgage payments during your loan term, unless you have some emergency savings.</label>'
     else:
         result += '<label class="thumbsup">Your loan amount looks safe with minimal risk of foreclosure or delinquency.</label>'
+    
+    result += '<br>'
+    result += '<form name="recommendations_form" action="/recommendations "method="POST">'
+    result += '<textarea name="recommendations" id="recommendations" style="display: none;"></textarea>'
+    result += '<div id="recommendations_submit" style="visibility: hidden;"><strong>Please see our <a href="" onclick="document.forms[\'recommendations_form\'].submit(); return false;">recommendations</a> on how you can reduce your chance of foreclosure.</strong></div>'
+    result += '</form>'
+
+    result += '</div>'
 
     return result
 
@@ -697,6 +709,7 @@ if __name__ == '__main__':
     train_model(foreclosure_model, train, settings.FORECLOSURE_TARGET, foreclosure_scaler)
     train_model(delinquency_model, train, settings.DELINQUENCY_TARGET, delinquency_scaler)
 
+    foreclosure_data_per_state = categoricals.get_all_foreclosure_data_with_ranking(train, 'property_state')
     app.run(debug=True, host='0.0.0.0', port=5775, use_reloader=False)
 
 

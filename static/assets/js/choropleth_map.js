@@ -45,7 +45,7 @@ var svg2 = d3.select("#chart").append("svg:svg")
     .attr("height", 500)
     
     
-        var color = d3.scale.linear().range(["#e5f5e0", "#31a354"]);
+        var color = d3.scale.linear().range(["#eff3ff","#08519c"])//.range(["#e5f5e0", "#31a354"]);
         //var color = d3.scale.linear().range(["rgb(237, 248, 233)", "rgb(1,109,44)"]);
         //d3.scale.quantile().range(["rgb(237, 248, 233)", "rgb(186, 228, 179)", "rgb(116,196,118)", "rgb(49,163,84)", "rgb(0,109,44)"]);
 

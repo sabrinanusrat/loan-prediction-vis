@@ -6,7 +6,7 @@
 -->
 <html>
 	<head>
-		<title>Prediction</title>
+		<title>Visualizations</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<link rel="stylesheet" href="{{url_for('static', filename = 'assets/css/main.css')}}" />
@@ -23,6 +23,30 @@
 	
     <link type="text/css" rel="stylesheet" href="{{url_for('static', filename = 'assets/css/dorling.css')}}"/>
     
+    <style>
+
+svg {
+  font: 10px sans-serif;
+}
+
+path {
+  fill: #a6bddb;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.brush .extent {
+  stroke: #fff;
+  fill-opacity: .125;
+  shape-rendering: crispEdges;
+}
+
+</style>
     
 	</head>
 	<body>
@@ -47,11 +71,31 @@
 		<!-- Main -->
 			<section id="main">
 				<div class="inner">
-			
-		<header class="major special">
+				
+				<header class="major special">
 						<h1>Visualize Data</h1>
 						
-						<h3>Foreclosure</h3>
+						<h3>Foreclosures over time</h3>
+						
+						<p>Number of foreclosures in last 10 years</p>
+					</header>
+
+			
+			
+				
+			<div id="chart0">
+    		
+
+	           <script type="text/javascript" src="{{url_for('static', filename = 'assets/js/time_data.js')}}"></script>
+
+			
+			</div>
+			
+			<br>
+			
+		<header class="major special">
+						
+						<h3>Foreclosure by States</h3>
 						
 						<p>Number of foreclosures in the US since 2015</p>
 					</header>

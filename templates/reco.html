@@ -41,44 +41,32 @@
 		</nav>
 
 		<!-- Main -->
-			<section id="main">
-				<div class="inner">
-					<header class="major special">
-						<h1>Recommendations and Insights</h1>
-					</header>
-					<section>
-						<div class="row">
-							<div>
-								<p>Based on your data, here we try to provide the some recommendations and insights for you so that your chances of entering into foreclosure is minimal.</p>
-							<!--<div class="6u 12u$(xsmall)">-->
-								<h4>Things you can do</h4>
-								<ul id='recommendations'>
-									<!--<li>Dolor pulvinar etiam magna etiam.</li>
-									<li>Sagittis adipiscing lorem eleifend.</li>
-									<li>Felis enim feugiat dolore viverra.</li>-->
-								</ul>
-							</div>
-							<!--<div class="6u$ 12u$(xsmall)">
-							</div>-->
+		<section id="main">
+			<div class="inner">
+				<header class="major special">
+					<h1>Recommendations and Insights</h1>
+				</header>
+				<section>
+					<div class="row">
+						<div>
+							<p>Based on your data, here we try to provide the some recommendations and insights for you so that your chances of entering into foreclosure is minimal.</p>
+							<h4>Things you can do</h4>
+							<ul id='recommendations' style="list-style-type: none;">
+							</ul>
 						</div>
-					</section>
-				</div>
-			</section>
-
-			<!--<div id='recommendations'>
-			</div>-->
+					</div>
+				</section>
+			</div>
+		</section>
 
 		<!-- Footer -->
-			<footer id="footer">
-				<ul class="icons">
-					<li><a href="#" class="icon fa-twitter"><span class="label">Twitter</span></a></li>
-					<li><a href="#" class="icon fa-facebook"><span class="label">Facebook</span></a></li>
-					<li><a href="#" class="icon fa-instagram"><span class="label">Instagram</span></a></li>
-				</ul>
-				<div class="copyright">
-					&copy; Untitled. Design: <a href="https://templated.co">TEMPLATED</a>. Images: <a href="https://unsplash.com">Unsplash</a>.
-				</div>
-			</footer>
+		<footer id="footer">
+				
+			<div class="copyright">
+				<!---&copy; Untitled. Design: <a href="https://templated.co">TEMPLATED</a>. Images: <a href="https://unsplash.com">Unsplash</a>.-->
+				Questions? <address> <a href="mailto:sabrinanusrat@gmail.com">Email Us!</a> </address>
+			</div>
+		</footer>
 
 		<!-- Scripts -->
 		<!-- Scripts -->
@@ -93,20 +81,52 @@
 				.append("div")
 				.attr("class", "tooltip")
 				.style("visibility", "hidden");
-			var recoElement = document.getElementById('recommendations');
 
 			var all_recommendations = JSON.parse({{recommendations|tojson}});
+			var recoElement = document.getElementById('recommendations');
+			if (all_recommendations.find(rec => rec.term==='short')) {
+				recoElement.innerHTML += 
+					'<li>' +
+						'<h5 style="color: darkgray; font-weight: 550;">Short-term actions</h5>' +
+						'<ul id="recommendations-short"></ul>' +
+					'</li>';
+			}
+			if (all_recommendations.find(rec => rec.term==='long')) {
+				recoElement.innerHTML += 
+					'<li>' +
+						'<h5 style="color: darkgray; font-weight: 550;">Long-term actions</h5>' +
+						'<ul id="recommendations-long"></ul>' +
+					'</li>';
+			}
+			if (all_recommendations.find(rec => rec.term==='other')) {
+				recoElement.innerHTML += 
+					'<li>' +
+						'<h5 style="color: darkgray; font-weight: 550;">Other recommendations</h5>' +
+						'<ul id="recommendations-other"></ul>' +
+					'</li>';
+			}
+			
+			var recoElementShort = document.getElementById('recommendations-short');
+			var recoElementLong = document.getElementById('recommendations-long');
+			var recoElementOther = document.getElementById('recommendations-other');
 			for (var r=0; r<all_recommendations.length; r++) {
 				var recommendation = all_recommendations[r];
-				recoElement.innerHTML += '<li>'+recommendation.text+'<br><div id="recommendation_chart_'+r+'"></div></li>';
+				var term = recommendation.term;
+				if (term==='short') {
+					recoElementShort.innerHTML += '<li>'+recommendation.text+'<br><div id="recommendation_chart_'+r+'"></div></li>';
+				} else if (term==='long') {
+					recoElementLong.innerHTML += '<li>'+recommendation.text+'<br><div id="recommendation_chart_'+r+'"></div></li>';
+				} else if (term==='other') {
+					recoElementOther.innerHTML += '<li>'+recommendation.text+'<br><div id="recommendation_chart_'+r+'"></div></li>';
+				}
 			}
 			for (var r=0; r<all_recommendations.length; r++) {
 				var recommendation = all_recommendations[r];
 				field = recommendation.param;
-				if(field !== 'zip code') {
+				if(!!recommendation.values.length) {
 					data = [];
 					for (var i=0; i<recommendation.values.length; i++) {
-						data.push([recommendation.values[i], Math.floor(100 * recommendation.probs[i])]);
+						data.push([recommendation.values[i], (100 * recommendation.probs[i]).toFixed(2)]);
 					}
 					draw_chart('recommendation_chart_'+r, data, 'Foreclosure probabilities for different '+field+'s', [field, 'foreclosure probability (%)'], 700, 500);
 				}

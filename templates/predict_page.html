@@ -41,11 +41,6 @@
 				</header>
 									
 				<div id='result'></div>
-				<form name="recommendations_form" action="{{ url_for('recommendations')}}"method="POST">
-					<textarea name="recommendations" id="recommendations" style="display: none;"></textarea>
-					<div id="recommendations_submit" style="visibility: hidden;"><a href="" onclick="document.forms['recommendations_form'].submit(); return false;">click here</a> to see our recommendations.</div>
-				</form>
-
 
 				<!---form start--->
 				<div>
@@ -65,10 +60,10 @@
 							<input type="text" id="annual_income" name="annual_income" placeholder="Your annual income" required="required" />
 						</div>
 
-						<div class="form-group">
+						<!--<div class="form-group">
 							<label class="inline-label">Are you a first time homebuyer?</label>
 							<div id="first_time_homebuyer" class="radio-group"></div>
-						</div>
+						</div>-->
 
 						<div class="form-group">
 							<label class="inline-label">Enter co-borrower's credit score (Enter 0 for no co-borrower)</label>
@@ -94,45 +89,29 @@
 							<input type="text" id="zip" name="zip" placeholder="ZIP code" required="required" /><br>
 						</div>
 
-						<!--<input type="text" name="property_type" placeholder="Property type ('SF', 'CO', 'CP', 'MH', 'PU')"/><br>-->
-						<!--<select id="property_type" name="property_type" required="required">
-							<option disabled selected value> -- choose a property type -- </option>
-						</select>
-						<br>-->
 						<div class="form-group">
 							<label class="inline-label">Choose a property type</label>
 							<div id="property_type" class="radio-group"></div>
 						</div>
 
-						<!--<input type="text" name="occupancy_status" placeholder="Occupancy status ('P', 'S', 'I')"/><br>-->
-						<!--<select id="occupancy_status" name="occupancy_status" required="required">
-							<option disabled selected value> -- choose an occupancy status -- </option>
-						</select>
-						<br>-->
 						<div class="form-group">
 							<label class="inline-label">Choose an occupancy status</label>
 							<div id="occupancy_status" class="radio-group"></div>
 						</div>
 
-						<!--<input type="text" name="unit_count" placeholder="How many units" /><br>-->
-						<!--<select id="unit_count" name="unit_count" required="required">
-							<option disabled selected value> -- select the number of units -- </option>
-						</select>
-						<br>-->
-						<div class="form-group">
+						<!--<div class="form-group">
 							<label class="inline-label">How many units are in the property?</label>
 							<div id="unit_count" class="radio-group"></div>
-						</div>
+						</div>-->
 
 
 						<h3>Loan Information</h3>
-						<!--<input type="text" name="lender" placeholder="Name of the lender" required="required" /><br>-->
-						<div class="form-group">
+						<!--<div class="form-group">
 							<label class="inline-label">Choose a lender *</label>
 							<select id="lender" name="lender" required="required">
 								<option disabled selected value> -- choose a lender -- </option>
 							</select>
-						</div>
+						</div>-->
 						
 						<div class="form-group">
 							<label class="inline-label">What's the interest rate for the loan? *</label>
@@ -149,19 +128,10 @@
 							<input type="text" id="loan_term" name="loan_term" placeholder="Loan term in years" required="required"/>
 						</div>
 						
-						<!--<input type="text" name="loan_purpose" placeholder="Purpose of the loan ('P', 'C', 'R', 'U')"/><br>-->
-						<div class="form-group">
+						<!--<div class="form-group">
 							<label class="inline-label">What's the purpose of the loan?</label>
 							<div id="loan_purpose" class="radio-group"></div>
-						</div>
-
-							<!--<input type="text" name="channel" placeholder="Channel" required="required" /><br>-->
-						<!--<input type="text" name="insurance_percentage" placeholder="Insurance percentage" required="required" /><br>-->
-						<!--<input type="text" name="product_type" placeholder="product_type" required="required" /><br>-->
-						<!--<input type="text" name="first_payment_year" placeholder="First payment year" required="required" /><br>-->
-						<!--<input type="text" name="first_payment_month" placeholder="First payment month" required="required" /><br>-->
-						<!--<input type="text" name="origination_year" placeholder="Origination year" required="required" /><br>-->
-						<!--<input type="text" name="origination_month" placeholder="Origination month" required="required" /><br>-->
+						</div>-->
 
 						<button type="submit" class="btn btn-primary btn-block btn-large">Predict</button>
 					</form>
@@ -195,13 +165,13 @@
 
 			var allOptions = {{options|tojson}};
 			var allSelections = {{selections|tojson}}
-			populateRadioButtons('first_time_homebuyer', allOptions['first_time_homebuyer'], allSelections['first_time_homebuyer']);
+			//populateRadioButtons('first_time_homebuyer', allOptions['first_time_homebuyer'], allSelections['first_time_homebuyer']);
 			populateDropdown('property_state', allOptions['property_state'], allSelections['property_state']);
 			populateRadioButtons('property_type', allOptions['property_type'], allSelections['property_type']);
 			populateRadioButtons('occupancy_status', allOptions['occupancy_status'], allSelections['occupancy_status']);
-			populateRadioButtons('unit_count', allOptions['unit_count'], allSelections['unit_count']);
-			populateDropdown('lender', allOptions['lender'], allSelections['lender']);
-			populateRadioButtons('loan_purpose', allOptions['loan_purpose'], allSelections['loan_purpose']);
+			//populateRadioButtons('unit_count', allOptions['unit_count'], allSelections['unit_count']);
+			//populateDropdown('lender', allOptions['lender'], allSelections['lender']);
+			//populateRadioButtons('loan_purpose', allOptions['loan_purpose'], allSelections['loan_purpose']);
 
 			for (field of ['borrower_credit_score', 'co_borrower_credit_score', 'annual_income',
 				'val', 'zip', 'interest_rate', 'down_payment', 'loan_term']) {

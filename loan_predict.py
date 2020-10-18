@@ -53,7 +53,7 @@ def predict():
     first_time_homebuyer = get_categorical_value('first_time_homebuyer', 'first_time_homebuyer')
     loan_purpose = get_categorical_value('loan_purpose', 'loan_purpose')
     property_type = get_categorical_value('property_type', 'property_type')
-    unit_count = int(request.form['unit_count']) if len(request.form['unit_count'])>0 else 1
+    unit_count = int(request.form['unit_count']) if 'unit_count' in request.form else 1
     occupancy_status = get_categorical_value('occupancy_status', 'occupancy_status')
     state = get_categorical_value('property_state', 'property_state')
     zip_code = (int(request.form["zip"])/100)
@@ -647,7 +647,7 @@ def get_pred_Status(foreclosure_probability):
         return 0
 
 def get_categorical_value(element, category):
-    if request.form[element] in categoricals.CATEGORICAL_INDEX_MAP[category]:
+    if element in request.form and request.form[element] in categoricals.CATEGORICAL_INDEX_MAP[category]:
         return categoricals.CATEGORICAL_INDEX_MAP[category][request.form[element]]
     else:
         return 0
@@ -655,10 +655,11 @@ def get_categorical_value(element, category):
 def form_prediction_result(foreclosure_probability, delinquency_probability):
     foreclosure_probability_percentage = int(100*foreclosure_probability)
     delinquency_probability_percentage = int(100*delinquency_probability)
-    result = '<div class="box centered"><h4>Prediction</h4>'
+    result = '<div class="box centered">'
+    result += '<h4>Prediction</h4>'
     result += '<section>foreclosure probability = {}%</section>'.format(foreclosure_probability_percentage)
     result += '<section>delinquency probability = {}%</section>'.format(delinquency_probability_percentage)
-    result += '<br>';
+    result += '<br>'
     if foreclosure_probability_percentage > 20:
         flag_fc=1
         result += '<label class="alarm">There is a significant risk that your house will be foreclosed on during the loan term. Consider purchasing a less expensive house or getting a better interest rate.</label>'
@@ -666,6 +667,14 @@ def form_prediction_result(foreclosure_probability, delinquency_probability):
         result += '<label class="warning">There is minimal risk for your house to be foreclosed on, but you will be in risk of missing one or more mortgage payments during your loan term, unless you have some emergency savings.</label>'
     else:
         result += '<label class="thumbsup">Your loan amount looks safe with minimal risk of foreclosure or delinquency.</label>'
+    
+    result += '<br>'
+    result += '<form name="recommendations_form" action="/recommendations "method="POST">'
+    result += '<textarea name="recommendations" id="recommendations" style="display: none;"></textarea>'
+    result += '<div id="recommendations_submit" style="visibility: hidden;"><strong>Please see our <a href="" onclick="document.forms[\'recommendations_form\'].submit(); return false;">recommendations</a> on how you can reduce your chance of foreclosure.</strong></div>'
+    result += '</form>'
+
+    result += '</div>'
 
     return result
 

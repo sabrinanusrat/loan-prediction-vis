@@ -498,12 +498,12 @@ def find_optimum_down_payment(foreclosure_model, foreclosure_scaler,
 
         if(get_pred_Status(foreclosure_probability)==1):
             return find_optimum_down_payment(foreclosure_model, foreclosure_scaler,
-            borrower_credit_score, new_debt_to_income_ratio, lender, interest_rate, new_loan_amount,
+            borrower_credit_score, new_debt_to_income_ratio, lender, interest_rate, loan_amount,
             state, zip_code, loan_term, loan_to_value, combined_loan_to_value, borrower_count,
             first_time_homebuyer, loan_purpose, property_type, unit_count, occupancy_status,
             product_type, co_borrower_credit_score, income, mid, high)
         else:
-            return find_optimum_down_payment(foreclosure_model, foreclosure_scaler, borrower_credit_score, new_debt_to_income_ratio, lender, interest_rate, new_loan_amount,
+            return find_optimum_down_payment(foreclosure_model, foreclosure_scaler, borrower_credit_score, new_debt_to_income_ratio, lender, interest_rate, loan_amount,
             state, zip_code, loan_term, loan_to_value, combined_loan_to_value, borrower_count,
             first_time_homebuyer, loan_purpose, property_type, unit_count, occupancy_status,
             product_type, co_borrower_credit_score, income, low, mid)

@@ -6,6 +6,7 @@ from sklearn import model_selection
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
 from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import confusion_matrix, accuracy_score
 
 def read():
     train = pd.read_csv(os.path.join(settings.PROCESSED_DIR, "train.csv"))
@@ -50,7 +51,7 @@ def train_and_test_model(model, train, target, scaler, threshold):
     X_test, y_test = train_model(model, train, target, scaler)
     X_test = scaler.transform(X_test)
     true_data_index = model.classes_.tolist().index(True)
-    y_pred = map(lambda probabilities: probabilities[true_data_index]>threshold, model.predict_proba(X_test))
+    y_pred = pd.Series(map(lambda probabilities: probabilities[true_data_index]>threshold, model.predict_proba(X_test)))
     return y_test, y_pred
 
 def predict_single_data(model, scaler, borrower_credit_score, debt_to_income_ratio,
@@ -119,15 +120,19 @@ def compute_and_print_accuracy(target, predictions, target_name, positive_phrase
     print("{} Recall: {}".format(negative_phrase, compute_recall(target, predictions, False)))
     count_and_print_performance_tabs(target, predictions, positive_phrase, negative_phrase)
 
+    cm = confusion_matrix(target, predictions)
+    print(cm)
+    accuracy_score(target, predictions)
+
 if __name__ == "__main__":
     train = read()
 
     foreclosure_scaler = StandardScaler()
-    foreclosure_model = LogisticRegression(random_state=0, class_weight="balanced")
-    #foreclosure_model = SVC(random_state=0, class_weight="balanced", kernel='rbf', probability=True)
+    #foreclosure_model = LogisticRegression(random_state=0, class_weight="balanced")
+    foreclosure_model = SVC(random_state=0, class_weight="balanced", kernel='rbf', probability=True)
     #foreclosure_predictions = cross_validate(foreclosure_model, train, settings.FORECLOSURE_TARGET, foreclosure_scaler)
     #compute_and_print_accuracy(train[settings.FORECLOSURE_TARGET], foreclosure_predictions, settings.FORECLOSURE_TARGET, "foreclosure", "non-foreclosure")
-    foreclosure_data, foreclosure_predictions = train_and_test_model(foreclosure_model, train, settings.FORECLOSURE_TARGET, foreclosure_scaler, 0.4)
+    foreclosure_data, foreclosure_predictions = train_and_test_model(foreclosure_model, train, settings.FORECLOSURE_TARGET, foreclosure_scaler, 0.2)
     compute_and_print_accuracy(foreclosure_data, foreclosure_predictions, settings.FORECLOSURE_TARGET, "foreclosure", "non-foreclosure")
 
     #delinquency_scaler = StandardScaler()

@@ -63,8 +63,8 @@ def compute_feature_importances(train, target, k):
     feat_importances.nlargest(k).plot(kind='barh')
     plt.show()
 
-def compute_correlation(train):
-    predictors = get_predictors(train)
+def compute_correlation(train, target):
+    predictors = get_predictors(train, target)
     train = removeNegativeRows(train, predictors)
     data = train[predictors+[settings.FORECLOSURE_TARGET, settings.DELINQUENCY_TARGET]]
 
@@ -98,4 +98,4 @@ if __name__ == "__main__":
     #selectKBestFeatures(train, settings.DELINQUENCY_TARGET, 18)
     #compute_feature_importances(train, settings.FORECLOSURE_TARGET, 18)
     #compute_feature_importances(train, settings.DELINQUENCY_TARGET, 5)
-    compute_correlation(train)
+    compute_correlation(train, settings.FORECLOSURE_TARGET)
